@@ -3,11 +3,16 @@ import ItemForm from "./ItemForm";
 import Filter from "./Filter";
 import Item from "./Item";
 
-function ShoppingList({ items }) {
+function ShoppingList({ items, onItemFormSubmit }) {
+  const [queryInput, setQueryInput] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
+  }
+  
+  function handleInputChange(e){
+    setQueryInput(e.target.value.toLocaleUpperCase())
   }
 
   const itemsToDisplay = items.filter((item) => {
@@ -16,14 +21,16 @@ function ShoppingList({ items }) {
     return item.category === selectedCategory;
   });
 
+  
   return (
     <div className="ShoppingList">
-      <ItemForm />
-      <Filter onCategoryChange={handleCategoryChange} />
+      <ItemForm onItemFormSubmit={onItemFormSubmit} items = {items}/>
+      <Filter onCategoryChange={handleCategoryChange} onSearchChange={handleInputChange}/>
       <ul className="Items">
-        {itemsToDisplay.map((item) => (
+        {itemsToDisplay.filter((query) => query.name.toUpperCase().includes(queryInput)).map((item) => (
           <Item key={item.id} name={item.name} category={item.category} />
         ))}
+        
       </ul>
     </div>
   );
